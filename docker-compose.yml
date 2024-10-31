@@ -13,6 +13,7 @@ services:
     depends_on:
       - mongo
       - redis
+    restart: always
     networks:
       - backend
 
@@ -26,6 +27,13 @@ services:
       - mongo_data:/data/db
     networks:
       - backend
+    restart: always
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 
   mongo-express:
     image: mongo-express:1.0-20-alpine3.19
@@ -38,6 +46,7 @@ services:
       ME_CONFIG_MONGODB_SERVER: mongo
     depends_on:
       - mongo
+    restart: always
     networks:
       - backend
 
@@ -53,3 +62,4 @@ networks:
 
 volumes:
   mongo_data:
+  redis_data:
